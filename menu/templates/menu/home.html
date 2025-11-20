@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Menu</title>
+    <link rel="stylesheet" href="{% static 'menu/style.css' %}">
+</head>
+<body>
+    <h1>🍴 Our Menu</h1>
+
+    <!-- Add Menu Item Form -->
+    <h2>Add Menu Item</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ menu_form.as_p }}
+        <button type="submit" name="add_item">Add Item</button>
+    </form>
+
+    <hr>
+
+    <!-- Display Menu Items -->
+    <div class="menu-items">
+        <h2>Available Dishes</h2>
+        {% for item in items %}
+            <div class="item">
+                <h3>{{ item.name }} - ₹{{ item.price }}</h3>
+                <p>{{ item.description }}</p>
+            </div>
+        {% empty %}
+            <p>No items yet!</p>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!-- Order Form -->
+    <h2>Place Your Order</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ order_form.as_p }}
+        <button type="submit" name="place_order">Place Order</button>
+    </form>
+
+    <hr>
+
+    <!-- Display Orders -->
+    <h2>Orders Placed</h2>
+    <div class="orders">
+        {% for order in orders %}
+            <div class="order">
+                <h3>{{ order.customer_name }}</h3>
+                <p>Items:
+                    {% for item in order.menu_items.all %}
+                        {{ item.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p>Total: ₹{{ order.total_price }}</p>
+            </div>
+        {% empty %}
+            <p>No orders yet!</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
